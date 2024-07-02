@@ -1,0 +1,6 @@
+@LOLUserManagerBEApi_HostAddress = http://localhost:5286
+
+GET {{LOLUserManagerBEApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
