@@ -1,0 +1,18 @@
+version: '3.4'
+
+services:
+  lolusermanagerbeapi:
+    image: ${DOCKER_REGISTRY-}lolusermanagerbeapi
+    build:
+      context: .
+      dockerfile: LOLUserManagerBEApi/Dockerfile
+    depends_on:
+      - database
+    volumes:
+      - ./Volumes/File01:/fileFolder
+  database:
+    build:
+        context: DockerFiles/MsSql
+        dockerfile: Dockerfile
+    ports:
+      - "1534:1433"
