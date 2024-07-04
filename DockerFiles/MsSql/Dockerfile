@@ -1,17 +1,19 @@
-FROM mcr.microsoft.com/mssql/server
+# Usa l'immagine ufficiale di Microsoft SQL Server
+FROM mcr.microsoft.com/mssql/server:2019-latest
 
+# Imposta le variabili d'ambiente
 ENV ACCEPT_EULA=Y
-ENV SA_PASSWORD=Pa55w0rd
+ENV SA_PASSWORD=YourStrong!Passw0rd
+ENV MSSQL_PID=Express
 
-USER root
+# Crea una cartella per gli script
 RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
-COPY setup/*.* /usr/src/app/
-COPY sql/*.* /usr/src/app/
-# Grant permissions for the import-data script to be executable
-RUN chmod 777 /usr/src/app/import-data.sh
-RUN chmod 777 /usr/src/app/entrypoint.sh
 
-#entrypoint script
+# Copia lo script SQL dalla cartella setup alla cartella nel contenitore
+COPY setup/init.sql /usr/src/app
 
-ENTRYPOINT /bin/bash /usr/src/app/entrypoint.sh
+# Esponi la porta di SQL Server
+EXPOSE 1534
+
+# Avvia SQL Server e esegui lo script per inizializzare il database
+CMD /bin/bash -c "/opt/mssql/bin/sqlservr & sleep 30 && /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong!Passw0rd -i /usr/src/app/init.sql && tail -f /dev/null"

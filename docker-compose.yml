@@ -7,12 +7,19 @@ services:
       context: .
       dockerfile: LOLUserManagerBEApi/Dockerfile
     depends_on:
-      - database
-    volumes:
-      - ./Volumes/File01:/fileFolder
-  database:
-    build:
-        context: DockerFiles/MsSql
-        dockerfile: Dockerfile
+      - sql
+  sql:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: sql
+    environment:
+      SA_PASSWORD: "YourStrong!Passw0rd"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Express"
     ports:
       - "1534:1433"
+    volumes:
+      - sql-data:/var/opt/mssql
+
+volumes:
+  sql-data:
+    driver: local
