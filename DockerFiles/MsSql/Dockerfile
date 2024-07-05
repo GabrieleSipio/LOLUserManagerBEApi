@@ -9,11 +9,14 @@ ENV MSSQL_PID=Express
 # Crea una cartella per gli script
 RUN mkdir -p /usr/src/app
 
-# Copia lo script SQL dalla cartella setup alla cartella nel contenitore
-COPY setup/init.sql /usr/src/app
+COPY setup/*.* /usr/src/app/
+COPY sql/*.* /usr/src/app/
 
-# Esponi la porta di SQL Server
 EXPOSE 1534
+# Grant permissions for the import-data script to be executable
+RUN chmod 777 /usr/src/app/import-data.sh
+RUN chmod 777 /usr/src/app/entrypoint.sh
 
-# Avvia SQL Server e esegui lo script per inizializzare il database
-CMD /bin/bash -c "/opt/mssql/bin/sqlservr & sleep 30 && /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong!Passw0rd -i /usr/src/app/init.sql && tail -f /dev/null"
+#entrypoint script
+
+ENTRYPOINT /bin/bash /usr/src/app/entrypoint.sh
