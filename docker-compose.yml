@@ -4,14 +4,14 @@ services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2019-latest
     build:
-      context: .
-      dockerfile: DockerFiles/MsSql/Dockerfile
+      context: DockerFiles/MsSql
+      dockerfile: Dockerfile
     container_name: sql_server
     environment:
       SA_PASSWORD: "YourStrong!Passw0rd"
       ACCEPT_EULA: "Y"
     ports:
-      - "1534:1433"
+      - "1433:1433"
     networks:
       - my_network
 
