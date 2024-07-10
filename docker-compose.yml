@@ -1,25 +1,34 @@
-version: '3.4'
+version: '3.8'
 
 services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: sql_server
+    environment:
+      SA_PASSWORD: "YourStrong!Passw0rd"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    networks:
+      - my_network
+
   lolusermanagerbeapi:
     image: ${DOCKER_REGISTRY-}lolusermanagerbeapi
     build:
       context: .
       dockerfile: LOLUserManagerBEApi/Dockerfile
+    container_name: dotnet_app
     depends_on:
-      - sql
-  sql:
-    image: mcr.microsoft.com/mssql/server:2019-latest
-    container_name: sql
+      - sqlserver
     environment:
-      SA_PASSWORD: "YourStrong!Passw0rd"
-      ACCEPT_EULA: "Y"
-      MSSQL_PID: "Express"
+      ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=TEST;User=sa;Password=YourStrong!Passw0rd;"
     ports:
-      - "1534:1433"
-    volumes:
-      - sql-data:/var/opt/mssql
+      - "8080:80"
+    networks:
+      - my_network
 
-volumes:
-  sql-data:
-    driver: local
+networks:
+  my_network:
+    driver: bridge
