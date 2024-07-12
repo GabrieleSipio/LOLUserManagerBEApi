@@ -33,7 +33,7 @@ fi
 echo "after if"
 
 # Run the setup script to create the DB and the schema in the DB
-for f in /usr/src/app/*.sql; do
+for f in /docker-entrypoint-initdb.d/*.sql; do
 	/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P $SA_PASSWORD -d master -i "$f"
 	echo "imported $f"
 done
